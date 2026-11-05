@@ -20,24 +20,22 @@ jobs:
 
     - name: Create Clean Android Project
       run: |
-        # Устанавливаем инструмент для генерации чистого шаблона
         npm install -g cordova
         cordova create fresh_project com.example.shake "ShakeWallpaper"
         cd fresh_project
         cordova platform add android
         
-        # Переносим ваши файлы (код и ресурсы) в чистый проект
+        # Умный поиск и копирование всех файлов из репозитория в шаблон
         mkdir -p platforms/android/app/src/main/java/com/example/shake/
-        cp -r ../*.java platforms/android/app/src/main/java/com/example/shake/ || true
-        cp -r ../*.png platforms/android/app/src/main/res/drawable/ || true
-        cp -r ../*.xml platforms/android/app/src/main/res/values/ || true
+        find .. -maxdepth 3 -name "*.java" ! -path "*/fresh_project/*" -exec cp {} platforms/android/app/src/main/java/com/example/shake/ \; || true
+        find .. -maxdepth 3 -name "*.png" ! -path "*/fresh_project/*" -exec cp {} platforms/android/app/src/main/res/drawable/ \; || true
+        find .. -maxdepth 3 -name "*.xml" ! -path "*/fresh_project/*" ! -name "AndroidManifest.xml" -exec cp {} platforms/android/app/src/main/res/values/ \; || true
         
-        # Запускаем чистую сборку
+        # Сборка
         cd platforms/android
         chmod +x gradlew
         ./gradlew assembleDebug
         
-        # Выносим готовый APK наружу
         mkdir -p ../../../output
         cp app/build/outputs/apk/debug/*.apk ../../../output/
 
