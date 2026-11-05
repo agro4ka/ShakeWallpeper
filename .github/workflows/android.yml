@@ -26,6 +26,7 @@ jobs:
       run: |
         echo "pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }" > settings.gradle
         echo "rootProject.name = 'ShakeWallpaper'" >> settings.gradle
+        gradle wrapper
         chmod +x gradlew
         ./gradlew assembleDebug
 
